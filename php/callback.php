@@ -2,7 +2,7 @@
 session_start();  // On va stocker le token en session
 
 $client_id = "adef4007c20249c9abcacb00abad0df2";
-$client_secret = "aed9aa2e8ccf43c5a535128e7cb78e08";
+$client_secret = "";
 $redirect_uri = "http://localhost/concert/php/callback.php";
 
 if (!isset($_GET['code'])) {
