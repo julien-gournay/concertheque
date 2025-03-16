@@ -1,0 +1,12 @@
+nav{
+    background-color: rgba(0, 0, 0, 0.4);
+}
+nav ul{
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+nav a{
+    color: white;
+}

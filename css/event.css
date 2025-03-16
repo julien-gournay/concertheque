@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+.body{
+    overflow: scroll;
+    background-color: black;
+    font-family: "Poppins", sans-serif;
+}
+.liste{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 1rem;
+}
+.card{
+    width: 22rem;
+    height: 200px;
+    display: flex;
+    background: #181818;
+    border: #181818;
+    border-radius: 10px;
+    color: aliceblue;
+    overflow: hidden;
+}
+.info{
+    width: -webkit-fill-available;
+    padding: 0.8rem;
+}
+img{
+    width: 140px;
+    height: 200px;
+    object-fit: cover; 
+}
+a{
+    text-decoration: none;
+}
+h1,h2,h3,h4{
+    font-family: "Poppins", sans-serif;
+}
+.listtag{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+.tag{
+    color: white;
+    padding: 0.5rem 0.8rem;
+    font-family: "Poppins", sans-serif;
+    height: fit-content;
+    width: fit-content;
+    border-radius: 30px;
+    font-size: x-small;
+}
+.tagdate{
+    background-color: red;
+    font-weight: 800;
+}
+.tagcomedie{
+    background-color: rgb(180, 0, 180);
+}
+.tagconcert{
+    background-color: blue;
+}
+.tagfestival{
+    background-color: rgb(0, 183, 0);
+}
+.tagshowcase{
+    background-color: rgb(186, 199, 0);
+}
+.tagsoiree{
+    background-color: rgb(128, 0, 92);
+}
+.cardtext{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 7.5rem;
+}
+.cardtext h4{
+    margin: 0px;
+}
