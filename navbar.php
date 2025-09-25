@@ -6,5 +6,6 @@
         <li><a href="soon.php">Prochainement</a></li>
         <li><a href="lieu.php">Salles</a></li>
         <li><a href="top_artists.php">Top spotify</a></li>
+        <li><a href="php/spotify.php">Se connecter à spotify</a></li>
     </ul>
 </nav>
