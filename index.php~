@@ -48,25 +48,25 @@
         <div style="display: flex; justify-content: center; width: 50%">
             <h1>Prochain evenement</h1>
 
-            <div id="default-carousel" class="relative w-full" data-carousel="slide">
-                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                <?php
-                    $n=0;
-                    while ($tab = mysqli_fetch_row($res2)) {
-                        $nomEvent = $tab[1];
-                        $dateEvent = $tab[2];
-                        $cover = $tab[8];
+        <div id="default-carousel" class="relative w-full" data-carousel="slide">
+            <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
+        <?php
+            $n=0;
+            while ($tab = mysqli_fetch_row($res2)) {
+                $nomEvent = $tab[1];
+                $dateEvent = $tab[2];
+                $cover = $tab[8];
 
-                        $n=$n+1;
+                $n=$n+1;
 
-                        echo("<div class=\"hidden duration-700 ease-in-out\" data-carousel-item>
-                                <img src=\"$cover\" class=\"absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2\" alt=\"...\">
-                                <div class=\"absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2\">
-                                   <h1>Test</h1>
-                                </div>
-                            </div>");
-                    }
-                ?>
+                echo("<div class=\"hidden duration-700 ease-in-out\" data-carousel-item>
+                        <img src=\"$cover\" class=\"absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2\" alt=\"...\">
+                        <div class=\"absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2\">
+                           <h1>Test</h1>
+                        </div>
+                    </div>");
+            }
+        ?>
                 </div>
                 <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
                     <?php
