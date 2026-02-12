@@ -10,118 +10,85 @@
     <link rel="shortcut icon" type="image/png" href="https://www.svgrepo.com/show/324422/mic-karaoke.svg">
     <title>Concerts souvenir</title>
 </head>
-<body>
-    <?php 
-        include "navbar.php";
-        include "config.php";
+<body class="bg-gray-50 text-gray-900">
+<?php
+include "navbar.php";
+include "config.php";
 
-        if($mabase){
-            $res = mysqli_query($cnt,"SELECT SUM(evenement.prixBillet),COUNT(evenement.idEvent), ROUND(AVG(evenement.prixBillet), 2) FROM evenement"); // Nb events + prix moyen
-            $res1 = mysqli_query($cnt,"SELECT COUNT(artiste.idArtiste) FROM artiste"); // Nb d'artistes
-            $res2 = mysqli_query($cnt,"SELECT * FROM evenement WHERE evenement.date>=NOW() ORDER BY evenement.date ASC LIMIT 10;"); // Prochain event
-            $res3 = mysqli_query($cnt,"SELECT YEAR(evenement.date), COUNT(evenement.date) FROM evenement GROUP BY YEAR(evenement.date);"); // Nb events par année
-            $res4 = mysqli_query($cnt,"SELECT COUNT(lieu.idLieu) FROM lieu"); // Nb de lieux
-            $res5 = mysqli_query($cnt,"SELECT artiste.nom, artiste.photo, artiste.idArtiste, COUNT(*) AS nb_apparitions FROM Association, artiste WHERE association.artiste = artiste.idArtiste GROUP BY artiste ORDER BY nb_apparitions DESC LIMIT 10;"); // Top artistes
+if($mabase){
+    $res = mysqli_query($cnt,"SELECT SUM(evenement.prixBillet),COUNT(evenement.idEvent), ROUND(AVG(evenement.prixBillet), 2) FROM evenement");
+    $res1 = mysqli_query($cnt,"SELECT COUNT(artiste.idArtiste) FROM artiste");
+    $res2 = mysqli_query($cnt,"SELECT * FROM evenement WHERE evenement.date>=NOW() ORDER BY evenement.date ASC LIMIT 1;");
+    $res4 = mysqli_query($cnt,"SELECT COUNT(lieu.idLieu) FROM lieu");
+}
+while ($tab = mysqli_fetch_row($res)) {
+    $prix = $tab[0];
+    $nbEvent = $tab[1];
+    $moyennePrix = $tab[2];
+}
+while ($tab = mysqli_fetch_row($res1)) {
+    $nbArtiste = $tab[0];
+}
+while ($tab = mysqli_fetch_row($res4)) {
+    $nbLieux = $tab[0];
+}
+$nextEvent = mysqli_fetch_assoc($res2);
+?>
 
-        }
-        while ($tab = mysqli_fetch_row($res)) {
-            $prix = $tab[0];
-            $nbEvent = $tab[1];
-            $moyennePrix = $tab[2];
-        }
-        while ($tab = mysqli_fetch_row($res1)) {
-            $nbArtiste = $tab[0];
-        }
-        while ($tab = mysqli_fetch_row($res4)) {
-            $nbLieux = $tab[0];
-        }
-    ?>
-    <section>
-        <h1>Concerts souvenir</h1>
-        <?php echo("<h3>Prix total : $prix € ($moyennePrix €/Event)</h3>"); ?>
-        <?php echo("<h3>Nombre d'evenement : $nbEvent</h3>"); ?>
-        <?php echo("<h3>Nombre d'artiste : $nbArtiste</h3>"); ?>
-        <?php echo("<h3>Nombre de lieu : $nbLieux</h3>"); ?>
-
-
-
-        <div style="display: flex; justify-content: center; width: 50%">
-            <h1>Prochain evenement</h1>
-
-            <div id="default-carousel" class="relative w-full" data-carousel="slide">
-                <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-                <?php
-                    $n=0;
-                    while ($tab = mysqli_fetch_row($res2)) {
-                        $nomEvent = $tab[1];
-                        $dateEvent = $tab[2];
-                        $cover = $tab[8];
-
-                        $n=$n+1;
-
-                        echo("<div class=\"hidden duration-700 ease-in-out\" data-carousel-item>
-                                <img src=\"$cover\" class=\"absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2\" alt=\"...\">
-                                <div class=\"absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2\">
-                                   <h1>Test</h1>
-                                </div>
-                            </div>");
-                    }
-                ?>
-                </div>
-                <div class="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-                    <?php
-                        for($i=0;$i<$n;$i++){
-                            echo("<button type=\"button\" class=\"w-3 h-3 rounded-full\" aria-current=\"true\" aria-label=\"Slide 1\" data-carousel-slide-to=\"$i\"></button>");
-                        }
-                    ?>
-
-                </div>
-                <button type="button" class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-prev>
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
-                        </svg>
-                        <span class="sr-only">Previous</span>
-                    </span>
-                        </button>
-                        <button type="button" class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none" data-carousel-next>
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                        <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-                        </svg>
-                        <span class="sr-only">Next</span>
-                    </span>
-                </button>
-            </div>
+<!-- HERO SECTION avec prochain concert -->
+<section class="relative h-screen flex items-center justify-center bg-gray-900">
+    <?php if ($nextEvent): ?>
+        <!-- Image de fond -->
+        <div class="absolute inset-0">
+            <img src="<?= $nextEvent['cover'] ?>"
+                 class="w-full h-full object-cover"
+                 alt="Bannière">
         </div>
 
-
-
-    </section>
-
-    <section>
-        <div class="lineup-artiste">
-        <?php
-        while ($tab = mysqli_fetch_row($res5)) {
-            $nomArtiste = $tab[0];
-            $photoArtiste = $tab[1];
-            $idArtiste = $tab[2];
-            $nbFois = $tab[3];
-
-            echo("<div class=\"lineup-artiste-cadre\">
-                <a href=\"infoartiste.php?id=$idArtiste\"><div class=\"lineup-artiste-img\"><img src=\"$photoArtiste\" alt=\"\"></div></a>
-                <a href=\"infoartiste.php?id=$idArtiste\">
-                    <div class=\"lineup-artiste-nom\">
-                        <h3>$nomArtiste</h3>
-                        <p>$nbFois fois</p>
-                    </div>
-                </a>
-            </div>");
-        }
-        ?>
+        <!-- Bloc texte avec fond sombre -->
+        <div class="relative z-10 max-w-3xl px-8 py-10 text-center text-white shadow-lg" style="background-color: rgba(0, 0, 0, 0.7); padding: 2rem; border-radius: 15px; ">
+            <h1 class="text-5xl md:text-7xl font-extrabold">
+                <?= $nextEvent['nomEvent'] ?>
+            </h1>
+            <p class="mt-6 text-xl md:text-2xl font-medium">
+                📅 <?= date("d/m/Y", strtotime($nextEvent['date'])) ?>
+            </p>
+            <a href="infoevent.php?id=<?= $nextEvent['idEvent'] ?>"
+               class="mt-10 inline-block px-8 py-4 text-lg font-semibold text-gray-900 bg-white rounded-xl shadow-lg hover:bg-gray-200 transition">
+                Voir l'événement
+            </a>
         </div>
-    </section>
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <?php else: ?>
+        <div class="relative z-10 max-w-3xl px-8 py-10 text-center text-white bg-black/70 rounded-2xl shadow-lg">
+            <h1 class="text-5xl md:text-7xl font-extrabold">Pas de concert prévu</h1>
+            <p class="mt-6 text-xl md:text-2xl">Reviens bientôt !</p>
+        </div>
+    <?php endif; ?>
+</section>
 
+
+
+
+<!-- STATS -->
+<section class="max-w-screen-xl px-4 py-12 mx-auto">
+    <div class="grid grid-cols-1 gap-6 text-center sm:grid-cols-2 lg:grid-cols-4">
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h3 class="text-2xl font-bold"><?= $nbEvent ?></h3>
+            <p class="mt-2 text-gray-600">Événements</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h3 class="text-2xl font-bold"><?= $nbArtiste ?></h3>
+            <p class="mt-2 text-gray-600">Artistes</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h3 class="text-2xl font-bold"><?= $nbLieux ?></h3>
+            <p class="mt-2 text-gray-600">Lieux</p>
+        </div>
+        <div class="p-6 bg-white rounded-lg shadow">
+            <h3 class="text-2xl font-bold"><?= $moyennePrix ?> €</h3>
+            <p class="mt-2 text-gray-600">Prix moyen billet</p>
+        </div>
+    </div>
+</section>
 </body>
 </html>

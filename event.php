@@ -4,75 +4,118 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="css/event.css">
-    <link rel="stylesheet" type="text/css" href="css/navbar.css">
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <link rel="shortcut icon" type="image/png" href="https://www.svgrepo.com/show/324422/mic-karaoke.svg">
-    <title>Les evenements</title>
+    <title>Les événements</title>
 </head>
-<body>
-    <?php include "navbar.php" ?>
-    <h1>Mes evenements</h1>
-    <div class="liste">
+<body class="bg-gray-100">
+<?php include "navbar.php"; ?>
+
+<section class="max-w-screen-xl mx-auto px-6 pt-24 pb-12">
+    <div class="flex flex-col md:flex-row md:justify-between items-center mb-8 gap-4">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center">Mes événements</h1>
+        <!-- Barre de recherche -->
+        <form method="POST" class="mb-8 flex justify-center">
+            <input
+                    type="text"
+                    name="nom"
+                    placeholder="Rechercher un événement..."
+                    class="px-4 py-2 w-80 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>"
+            >
+            <button
+                    type="submit"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition"
+            >
+                Rechercher
+            </button>
+        </form>
+    </div>
+
+    <!-- Grid des cartes événements -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <?php
-            include "config.php";
-            
-            if (isset($_POST['nom'])) {
-                $searchnom = $_POST['nom'];
-                $res = mysqli_query($cnt, "SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType AND nomEvent LIKE '%$searchnom%' ORDER BY evenement.date DESC;");
-            } else {
-                $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
-            }
-            While ($tab=mysqli_fetch_row($res)){
-                $idEvent = $tab[0];
-                $nomEvent = $tab[1];
-                $date = $tab[2];
-                $lieu = $tab[3];
-                $type = $tab[4];
-                $placement = $tab[5];
-                $affiche = $tab[7];
-                $cover = $tab[8];
-                $prixBillet = $tab[9];
-                $typeComp = $tab[10];
+        include "config.php";
 
-                $dateM = new DateTime($date);
-                $dateM->format("d M Y"); // Affiche : 25 Feb 2025
+        if (isset($_POST['nom'])) {
+            $searchnom = $_POST['nom'];
+            $res = mysqli_query($cnt, "SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType AND nomEvent LIKE '%$searchnom%' ORDER BY evenement.date DESC;");
+        } else {
+            $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
+        }
 
-                echo("
-                <a href=\"./infoevent.php?id=$idEvent\">
-                    <div class=\"card\">
-                        <div class=\"affiche\">
-                            <img src=\"$affiche\" href=\"#\">
+        while ($tab=mysqli_fetch_row($res)){
+            $idEvent = $tab[0];
+            $nomEvent = $tab[1];
+            $date = $tab[2];
+            $lieu = $tab[3];
+            $type = $tab[4];
+            $affiche = $tab[7];
+            $prixBillet = $tab[9];
+
+            $dateM = new DateTime($date);
+
+            // Mois en français
+            $mois = [
+                1=>"Janvier", 2=>"Février", 3=>"Mars", 4=>"Avril", 5=>"Mai", 6=>"Juin",
+                7=>"Juillet", 8=>"Août", 9=>"Septembre", 10=>"Octobre", 11=>"Novembre", 12=>"Décembre"
+            ];
+
+            $jour = $dateM->format("d");
+            $moisTexte = $mois[intval($dateM->format("m"))];
+            $annee = $dateM->format("Y");
+
+            $formattedDate = "$jour $moisTexte $annee"; // ex : 20 Juin 2025
+
+            // Couleur tag
+            $tagClass = match($type){
+                "COM" => "bg-pink-500",
+                "CON" => "bg-red-500",
+                "FES" => "bg-yellow-500",
+                "SHO" => "bg-green-500",
+                "SOI" => "bg-purple-500",
+                default => "bg-gray-400",
+            };
+
+            echo("<a href='./infoevent.php?id=$idEvent' class='group flex justify-center'>
+                    <div class='bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition hover:-translate-y-2 w-72'>
+                        
+                        <!-- Image verticale type affiche -->
+                        <div class='relative w-72 h-96'>
+                            <img src='$affiche' alt='$nomEvent' class='w-full h-full object-cover'>
+                            <!-- Badge type d'événement -->
+                            <div class='absolute top-3 left-3 flex gap-2 ml-3'>");
+
+                            // Badge 'Prochainement' conditionnel (affiché en premier)
+                            if(strtotime($date) > time()){
+                                echo("
+                                    <span class='text-white text-sm font-semibold px-3 py-1 rounded-full' style='background-color: black'>
+                                        Prochainement
+                                    </span>");
+                            }
+
+                            // Badge type d'événement
+                            echo("
+                                <span class='text-white text-sm font-semibold px-3 py-1 rounded-full $tagClass'>
+                                    $tab[10]
+                                </span>
+                            </div>
                         </div>
-                        <div class=\"info\"><div class=\"listtag\">");
-                        if($date>date("Y-m-d")){
-                            echo("<p class=\"tag tagdate\">Prochainement</p>");
-                        };
-                        switch($type){
-                            case "COM":
-                                echo("<p class=\"tag tagcomedie\">Comédie musical</p>");
-                                break;
-                            case "CON":
-                                echo("<p class=\"tag tagconcert\">Concert</p>");
-                                break;
-                            case "FES":
-                                echo("<p class=\"tag tagfestival\">Festival</p>");
-                                break;
-                            case "SHO":
-                                echo("<p class=\"tag tagshowcase\">Showcase</p>");
-                                break;
-                            case "SOI":
-                                echo("<p class=\"tag tagsoiree\">Soirée</p>");
-                                break;
-                        };
-                            echo("</div>
-                            <div class=\"cardtext\"><h4>$nomEvent</h4>
-                            <h4>".$dateM->format("d M Y")."</h4></div>
+                
+                        <!-- Infos -->
+                        <div class='p-4'>
+                            <h2 class='text-xl font-bold text-gray-900 mb-2'>$nomEvent</h2>
+                            <p class='text-gray-600 text-sm'>".$formattedDate." | ".$lieu."</p>
+                            <p class='text-gray-500 text-sm mt-2 font-semibold'>Prix : $prixBillet €</p>
                         </div>
                     </div>
-                </a>");
-            }
-			//echo("Nombre d'artistes vu : $nbArtiste");
+                </a>
+                ");
+            ;}
         ?>
     </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </body>
 </html>
