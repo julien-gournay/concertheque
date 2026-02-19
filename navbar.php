@@ -14,16 +14,16 @@
             <a href="artiste.php" class="text-white hover:text-yellow-300 transition">Artistes</a>
             <a href="event.php" class="text-white hover:text-yellow-300 transition">Événements</a>
             <a href="lieu.php" class="text-white hover:text-yellow-300 transition">Salles</a>
-            <a href="top_artists.php" class="text-white hover:text-yellow-300 transition">Top Spotify</a>
+            <!--<a href="top_artists.php" class="text-white hover:text-yellow-300 transition">Top Spotify</a>-->
         </div>
 
-        <!-- Bouton CTA -->
+        <!--
         <div class="hidden md:block">
             <a href="php/spotify.php"
                class="hidden md:block px-5 py-2.5 rounded-lg bg-yellow-400 text-gray-900 font-semibold shadow hover:bg-yellow-300 transition-colors duration-300">
                 Se connecter
             </a>
-        </div>
+        </div> -->
 
         <!-- Burger (mobile) -->
         <button data-collapse-toggle="navbar-menu" type="button"
@@ -42,10 +42,10 @@
         <a href="artiste.php" class="block text-white hover:text-yellow-300">Artistes</a>
         <a href="event.php" class="block text-white hover:text-yellow-300">Événements</a>
         <a href="lieu.php" class="block text-white hover:text-yellow-300">Salles</a>
-        <a href="top_artists.php" class="block text-white hover:text-yellow-300">Top Spotify</a>
+        <!--<a href="top_artists.php" class="block text-white hover:text-yellow-300">Top Spotify</a>
         <a href="php/spotify.php" class="block px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold text-center shadow hover:bg-yellow-300 transition">
             Se connecter
-        </a>
+        </a>-->
     </div>
 </nav>
 

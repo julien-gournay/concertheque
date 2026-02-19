@@ -11,10 +11,11 @@
 </head>
 <body>
     <?php
+        include "navbar.php";
         include "config.php";
 
         // Fonction pour récupérer le rang d'un artiste sur Spotify
-        function getArtistRankOnSpotify($artist_name, $access_token) {
+        /*function getArtistRankOnSpotify($artist_name, $access_token) {
             $url = "https://api.spotify.com/v1/me/top/artists?limit=50"; // Récupère les 50 premiers artistes les plus écoutés
 
             $ch = curl_init($url);
@@ -45,7 +46,7 @@
             }
 
             return 'Inconnu'; // Si l'artiste n'est pas trouvé dans la liste
-        }
+        }*/
 
         // Récupération de l'ID de l'artiste depuis l'URL
         if(isset($_GET["id"])){
@@ -71,12 +72,12 @@
 
         session_start();
         // Vérifier si la variable 'access_token' existe dans la session
-        if (isset($_SESSION['access_token'])) {
+        /*if (isset($_SESSION['access_token'])) {
             $access_token = $_SESSION['access_token'];
         } else {
             echo "Aucun token d'accès trouvé dans la session.";
         }
-        $rank = getArtistRankOnSpotify($nom, $access_token); // Récupère le rang de cet artiste
+        $rank = getArtistRankOnSpotify($nom, $access_token);*/ // Récupère le rang de cet artiste
 
     ?>
     
@@ -94,7 +95,7 @@
                     <p>Nombre d'event : $nbvu</p>");
                     
                     // Affichage du rang sur Spotify
-                    echo "<p>Top <b><a href=\"top_artists.php\">" . ($rank != 'Inconnu' ? $rank : 'Inconnu') . "</a></b> sur mon spotify</p>";
+                    //echo "<p>Top <b><a href=\"top_artists.php\">" . ($rank != 'Inconnu' ? $rank : 'Inconnu') . "</a></b> sur mon spotify</p>";
                 ?>
             </div>
             <div>

@@ -15,34 +15,22 @@
     <div class="flex flex-col md:flex-row md:justify-between items-center mb-8 gap-4">
         <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center">Mes événements</h1>
         <!-- Barre de recherche -->
-        <form method="POST" class="mb-8 flex justify-center">
+        <div class="mb-8 flex justify-center">
             <input
-                    type="text"
-                    name="nom"
-                    placeholder="Rechercher un événement..."
-                    class="px-4 py-2 w-80 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>"
+                type="text"
+                id="searchInput"
+                oninput="filterEvents()"
+                placeholder="Rechercher un événement..."
+                class="px-4 py-2 w-80 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-            <button
-                    type="submit"
-                    class="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 transition"
-            >
-                Rechercher
-            </button>
-        </form>
+        </div>
     </div>
 
     <!-- Grid des cartes événements -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <?php
         include "config.php";
-
-        if (isset($_POST['nom'])) {
-            $searchnom = $_POST['nom'];
-            $res = mysqli_query($cnt, "SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType AND nomEvent LIKE '%$searchnom%' ORDER BY evenement.date DESC;");
-        } else {
-            $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
-        }
+        $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
 
         while ($tab=mysqli_fetch_row($res)){
             $idEvent = $tab[0];
@@ -77,7 +65,7 @@
                 default => "bg-gray-400",
             };
 
-            echo("<a href='./infoevent.php?id=$idEvent' class='group flex justify-center'>
+            echo("<a href='./infoevent.php?id=$idEvent' class='event-card group flex justify-center' data-nom='".strtolower($nomEvent)."'>
                     <div class='bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition hover:-translate-y-2 w-72'>
                         
                         <!-- Image verticale type affiche -->
@@ -114,8 +102,24 @@
             ;}
         ?>
     </div>
+
+    <!-- Aucun résultat -->
+    <p id="noResult" class="hidden text-center text-gray-500 text-lg py-16">Aucun événement trouvé.</p>
 </section>
 
+<script>
+    function filterEvents() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('#eventsGrid .event-card');
+        let visible = 0;
+        cards.forEach(card => {
+            const match = card.dataset.nom.includes(query);
+            card.style.display = match ? '' : 'none';
+            if (match) visible++;
+        });
+        document.getElementById('noResult').classList.toggle('hidden', visible > 0);
+    }
+</script>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
 </body>
 </html>
