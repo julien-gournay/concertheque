@@ -9,13 +9,23 @@
     <title>Les événements</title>
 </head>
 <body class="bg-gray-100">
-<?php include "navbar.php"; ?>
+<?php
+    if (file_exists(__DIR__ . "/navbar.php")) {
+        include __DIR__ . "/navbar.php";
+    }
+    include __DIR__ . "/config.php";
+    if (!isset($cnt) || !$cnt) {
+        $cnt = mysqli_connect('localhost', 'root', '');
+        mysqli_select_db($cnt, 'concerts');
+    }
+?>
 
 <section class="max-w-screen-xl mx-auto px-6 pt-24 pb-12">
     <div class="flex flex-col md:flex-row md:justify-between items-center mb-8 gap-4">
         <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-8 text-center">Mes événements</h1>
         <!-- Barre de recherche -->
         <div class="mb-8 flex justify-center">
+            <label for="searchInput" class="sr-only">Rechercher un événement</label>
             <input
                 type="text"
                 id="searchInput"
@@ -29,7 +39,6 @@
     <!-- Grid des cartes événements -->
     <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <?php
-        include "config.php";
         $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
 
         while ($tab=mysqli_fetch_row($res)){
@@ -56,14 +65,24 @@
             $formattedDate = "$jour $moisTexte $annee"; // ex : 20 Juin 2025
 
             // Couleur tag
-            $tagClass = match($type){
-                "COM" => "bg-pink-500",
-                "CON" => "bg-red-500",
-                "FES" => "bg-yellow-500",
-                "SHO" => "bg-green-500",
-                "SOI" => "bg-purple-500",
-                default => "bg-gray-400",
-            };
+            $tagClass = "bg-gray-400";
+            switch ($type) {
+                case "COM":
+                    $tagClass = "bg-pink-500";
+                    break;
+                case "CON":
+                    $tagClass = "bg-red-500";
+                    break;
+                case "FES":
+                    $tagClass = "bg-yellow-500";
+                    break;
+                case "SHO":
+                    $tagClass = "bg-green-500";
+                    break;
+                case "SOI":
+                    $tagClass = "bg-purple-500";
+                    break;
+            }
 
             echo("<a href='./infoevent.php?id=$idEvent' class='event-card group flex justify-center' data-nom='".strtolower($nomEvent)."'>
                     <div class='bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition hover:-translate-y-2 w-72'>
