@@ -15,15 +15,18 @@ include "navbar.php";
 include "config.php";
 
 if($mabase){
-    $res = mysqli_query($cnt,"SELECT SUM(evenement.prixBillet),COUNT(evenement.idEvent), ROUND(AVG(evenement.prixBillet), 2) FROM evenement");
+    $res = mysqli_query($cnt,"SELECT SUM(evenement.prixBillet), SUM(IFNULL(evenement.depenseSup, 0)), SUM(evenement.prixBillet) + SUM(IFNULL(evenement.depenseSup, 0)), COUNT(evenement.idEvent), ROUND(AVG(evenement.prixBillet), 2) FROM evenement");
     $res1 = mysqli_query($cnt,"SELECT COUNT(artiste.idArtiste) FROM artiste");
     $res2 = mysqli_query($cnt,"SELECT * FROM evenement WHERE evenement.date>=NOW() ORDER BY evenement.date ASC LIMIT 1;");
     $res4 = mysqli_query($cnt,"SELECT COUNT(lieu.idLieu) FROM lieu");
+    $res5 = mysqli_query($cnt,"SELECT YEAR(evenement.date) AS annee, COUNT(evenement.idEvent) AS nbConcerts, SUM(evenement.prixBillet) AS totalBillet, SUM(IFNULL(evenement.depenseSup, 0)) AS totalSup, SUM(evenement.prixBillet) + SUM(IFNULL(evenement.depenseSup, 0)) AS totalGeneral, LAG(SUM(evenement.prixBillet) + SUM(IFNULL(evenement.depenseSup, 0))) OVER (ORDER BY YEAR(evenement.date)) AS totalGeneralPrecedent FROM evenement GROUP BY YEAR(evenement.date) ORDER BY annee DESC");
 }
 while ($tab = mysqli_fetch_row($res)) {
-    $prix = $tab[0];
-    $nbEvent = $tab[1];
-    $moyennePrix = $tab[2];
+    $prixBillet = $tab[0];
+    $prixSup = $tab[1];
+    $prix = $tab[2];
+    $nbEvent = $tab[3];
+    $moyennePrix = $tab[4];
 }
 while ($tab = mysqli_fetch_row($res1)) {
     $nbArtiste = $tab[0];
@@ -86,6 +89,62 @@ $nextEvent = mysqli_fetch_assoc($res2);
         <div class="p-6 bg-white rounded-lg shadow">
             <h3 class="text-2xl font-bold"><?= $moyennePrix ?> €</h3>
             <p class="mt-2 text-gray-600">Prix moyen billet</p>
+        </div>
+    </div>
+</section>
+
+<!-- MONTANT TOTAL ET TABLEAU PAR ANNÉE -->
+<section class="max-w-screen-xl px-4 py-12 mx-auto">
+    <!-- Montant total dépensé -->
+    <div class="mb-12 p-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg text-white text-center">
+        <h2 class="text-3xl font-bold mb-2">Montant total dépensé</h2>
+        <p class="text-5xl font-extrabold"><?= number_format($prix, 2, ',', ' ') ?> €</p>
+        <p class="mt-3 text-lg text-white/90">
+            (dont <?= number_format($prixBillet, 2, ',', ' ') ?> € de billets)
+        </p>
+    </div>
+
+    <!-- Tableau des stats par année -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 bg-gray-100 border-b border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-900">Dépenses par année</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Année</th>
+                        <th class="px-6 py-3 text-center text-sm font-semibold text-gray-700">Nombre de concerts</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Montant total billets</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Montant total dépenses sup.</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">Montant total général</th>
+                        <th class="px-6 py-3 text-right text-sm font-semibold text-gray-700">% vs année précédente</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_assoc($res5)):
+                        $pourcentage = null;
+                        if ($row['totalGeneralPrecedent'] !== null && $row['totalGeneralPrecedent'] > 0) {
+                            $pourcentage = (($row['totalGeneral'] - $row['totalGeneralPrecedent']) / $row['totalGeneralPrecedent']) * 100;
+                        }
+                    ?>
+                    <tr class="border-b border-gray-200 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 text-sm font-semibold text-gray-900"><?= $row['annee'] ?></td>
+                        <td class="px-6 py-4 text-center text-sm text-gray-600"><?= $row['nbConcerts'] ?></td>
+                        <td class="px-6 py-4 text-right text-sm font-semibold text-blue-600"><?= number_format($row['totalBillet'], 2, ',', ' ') ?> €</td>
+                        <td class="px-6 py-4 text-right text-sm font-semibold text-blue-600"><?= number_format($row['totalSup'], 2, ',', ' ') ?> €</td>
+                        <td class="px-6 py-4 text-right text-sm font-semibold text-blue-600"><?= number_format($row['totalGeneral'], 2, ',', ' ') ?> €</td>
+                        <td class="px-6 py-4 text-right text-sm font-semibold <?= $pourcentage !== null ? ($pourcentage >= 0 ? 'text-green-600' : 'text-red-600') : 'text-gray-600' ?>">
+                            <?php if ($pourcentage !== null): ?>
+                                <?= ($pourcentage >= 0 ? '+' : '') . number_format($pourcentage, 2, ',', ' ') ?>%
+                            <?php else: ?>
+                                -
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </section>

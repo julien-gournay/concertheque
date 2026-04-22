@@ -13,7 +13,7 @@
         include "navbar.php";
         include "config.php";
         session_start();
-        $res = mysqli_query($cnt, "SELECT * FROM artiste ORDER BY nom");
+        $res = mysqli_query($cnt, "SELECT artiste.*, COUNT(association.idAsso) AS nbVues FROM artiste LEFT JOIN association ON association.artiste = artiste.idArtiste GROUP BY artiste.idArtiste ORDER BY artiste.nom");
         $resCount = mysqli_query($cnt, "SELECT COUNT(*) FROM artiste");
         $nbArtistes = mysqli_fetch_row($resCount)[0];
     ?>
@@ -35,12 +35,13 @@
     </section>
 
     <!-- GRILLE ARTISTES -->
-    <div id="artisteGrid" class="max-w-screen-xl mx-auto px-6 pb-16 grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4">
+    <div id="artisteGrid" class="max-w-screen-xl mx-auto px-6 pb-16 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         <?php while ($tab = mysqli_fetch_row($res)):
             $idArtiste = $tab[0];
             $nom       = $tab[1];
             $genre     = $tab[2];
             $photo     = $tab[3];
+            $nbVues    = $tab[4];
         ?>
         <a href="./infoartiste.php?id=<?= $idArtiste ?>"
            class="artist-card group"
@@ -62,6 +63,7 @@
                 <!-- Infos -->
                 <div class="p-3">
                     <h2 class="text-sm font-bold text-gray-900 truncate"><?= htmlspecialchars($nom) ?></h2>
+                    <p class="text-xs text-gray-500 mt-1"><?= (int)$nbVues ?> fois vu</p>
                 </div>
             </div>
         </a>

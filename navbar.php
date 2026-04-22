@@ -5,7 +5,7 @@
         <!-- Logo -->
         <a href="index.php" class="flex items-center space-x-2">
             <img src="https://www.svgrepo.com/show/324422/mic-karaoke.svg" class="h-8 w-8" alt="Logo">
-            <span class="text-xl font-bold text-white drop-shadow">Concerts Souvenir</span>
+            <span class="text-xl font-bold text-white drop-shadow">Concertotheque</span>
         </a>
 
         <!-- Menu principal (desktop) -->

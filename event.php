@@ -39,13 +39,13 @@
     <!-- Grid des cartes événements -->
     <div id="eventsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <?php
-        $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType FROM evenement,type WHERE evenement.type=type.idType ORDER BY evenement.date DESC;");
+        $res = mysqli_query($cnt,"SELECT evenement.*, type.nomType, lieu.nomLieu FROM evenement INNER JOIN type ON evenement.type = type.idType INNER JOIN lieu ON evenement.lieu = lieu.idLieu ORDER BY evenement.date DESC;");
 
         while ($tab=mysqli_fetch_row($res)){
             $idEvent = $tab[0];
             $nomEvent = $tab[1];
             $date = $tab[2];
-            $lieu = $tab[3];
+            $lieu = $tab[12];
             $type = $tab[4];
             $affiche = $tab[7];
             $prixBillet = $tab[9];
@@ -104,7 +104,7 @@
                             // Badge type d'événement
                             echo("
                                 <span class='text-white text-sm font-semibold px-3 py-1 rounded-full $tagClass'>
-                                    $tab[10]
+                                    $tab[11]
                                 </span>
                             </div>
                         </div>

@@ -50,7 +50,7 @@
                     <img src="<?= htmlspecialchars($photoLieu) ?>" alt="<?= htmlspecialchars($nomLieu) ?>"
                          class="w-full h-full object-cover">
                     <!-- Badge pays -->
-                    <div class="absolute top-3 left-3">
+                    <div class="absolute top-5 left-5">
                         <span class="bg-blue-600 text-white text-sm font-semibold px-3 py-1 rounded-full">
                             <?= htmlspecialchars($pays) ?>
                         </span>
